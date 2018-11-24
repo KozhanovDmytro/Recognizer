@@ -5,13 +5,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.ImageFormat;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
-import android.graphics.drawable.ShapeDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -29,16 +25,15 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
 import android.view.Surface;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -47,13 +42,20 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 
 public class MainActivity extends Activity {
     private static final String TAG = "AndroidCameraApi";
 
+    private SurfaceView surfaceView;
+
     private TextureView textureView;
+
+    private Marks marks = new Marks();
+
+    private Recognizer recognizer;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -83,12 +85,21 @@ public class MainActivity extends Activity {
         textureView = findViewById(R.id.textureView);
         assert textureView != null;
         textureView.setSurfaceTextureListener(textureListener);
+
+
+        surfaceView = findViewById(R.id.surfaceView);
+        surfaceView.setZOrderOnTop(true);
+        SurfaceHolder mHolder = surfaceView.getHolder();
+        mHolder.setFormat(PixelFormat.TRANSPARENT);
+
+        mHolder.addCallback(marks);
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
+            recognizer = new Recognizer();
             openCamera();
         }
 
@@ -104,7 +115,15 @@ public class MainActivity extends Activity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+            boolean result = recognizer.isResult();
 
+            recognizer.setBitmap(textureView.getBitmap());
+            recognizer.setRectangles(marks.getRectangles());
+
+            if(recognizer.recognize()) {
+                Date date = new Date();
+                System.out.println("recognized: " + date.getMinutes() + "m. " + date.getSeconds());
+            }
         }
     };
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
@@ -255,6 +274,8 @@ public class MainActivity extends Activity {
                     }
                     // When the session is ready, we start displaying the preview.
                     cameraCaptureSessions = cameraCaptureSession;
+
+                    System.out.println("asdf");
 
                     updatePreview();
                 }
