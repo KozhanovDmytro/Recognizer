@@ -3,6 +3,7 @@ package com.example.recognizer;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.Log;
 import android.util.Size;
@@ -94,6 +95,14 @@ public class Marks implements SurfaceHolder.Callback {
         result.add(getFifth());
         
         return result; 
+    }
+
+    public List<Point> getWhitePoints() {
+        List<Point> points = new ArrayList<>();
+
+        points.add(new Point(size.getWidth() / 2, size.getHeight() - (centimeter * 2)));
+
+        return points;
     }
 
 

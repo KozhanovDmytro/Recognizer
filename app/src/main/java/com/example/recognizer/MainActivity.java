@@ -4,7 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
@@ -32,6 +34,7 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -44,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 
 public class MainActivity extends Activity {
@@ -53,9 +57,11 @@ public class MainActivity extends Activity {
 
     private TextureView textureView;
 
+    private TextView textView;
+
     private Marks marks = new Marks();
 
-    private Recognizer recognizer;
+    private volatile boolean result;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -92,6 +98,8 @@ public class MainActivity extends Activity {
         SurfaceHolder mHolder = surfaceView.getHolder();
         mHolder.setFormat(PixelFormat.TRANSPARENT);
 
+        textView = findViewById(R.id.textView);
+
         mHolder.addCallback(marks);
     }
 
@@ -99,7 +107,6 @@ public class MainActivity extends Activity {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
             //open your camera here
-            recognizer = new Recognizer();
             openCamera();
         }
 
@@ -115,14 +122,14 @@ public class MainActivity extends Activity {
 
         @Override
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
-            boolean result = recognizer.isResult();
-
-            recognizer.setBitmap(textureView.getBitmap());
-            recognizer.setRectangles(marks.getRectangles());
+            Recognizer recognizer = new Recognizer(textureView.getBitmap(), marks.getRectangles(), marks.getWhitePoints());
 
             if(recognizer.recognize()) {
-                Date date = new Date();
-                System.out.println("recognized: " + date.getMinutes() + "m. " + date.getSeconds());
+                textView.setText("Detected");
+                textView.setTextColor(Color.GREEN);
+            } else {
+                textView.setText("Not detected");
+                textView.setTextColor(Color.RED);
             }
         }
     };
