@@ -53,37 +53,60 @@ public class Marks implements SurfaceHolder.Callback {
     }
 
     private Rect getFirst(){
-        return new Rect((centimeter * 2),
-                size.getHeight() - (centimeter * 2),
-                (centimeter * 4),
-                size.getHeight() - centimeter);
+        return new Rect((centimeter * 1),
+                size.getHeight() - (centimeter * 4),
+                (centimeter * 3),
+                size.getHeight() - centimeter * 2);
     }
+
+    private Rect getEightth(){
+        return new Rect((centimeter * 1),
+                size.getHeight() - (centimeter * 8),
+                (centimeter * 3),
+                size.getHeight() - centimeter * 6);
+    }
+
+
     private Rect getSecond(){
-        return new Rect((centimeter * 5),
-                size.getHeight() - (centimeter * 2),
-                (centimeter * 7),
-                size.getHeight() - centimeter);
+        return new Rect((centimeter * 4),
+                size.getHeight() - (centimeter * 4),
+                (centimeter * 6),
+                size.getHeight() - centimeter * 2);
+    }
+
+    private Rect getSeventh(){
+        return new Rect((centimeter * 4),
+                size.getHeight() - (centimeter * 8),
+                (centimeter * 6),
+                size.getHeight() - centimeter * 6);
     }
 
     private Rect getThird(){
         return new Rect((centimeter * 14),
-                size.getHeight() - (centimeter * 2),
+                size.getHeight() - (centimeter * 4),
                 (centimeter * 16),
-                size.getHeight() - centimeter);
+                size.getHeight() - centimeter * 2);
+    }
+
+    private Rect getSixth(){
+        return new Rect((centimeter * 14),
+                size.getHeight() - (centimeter * 8),
+                (centimeter * 16),
+                size.getHeight() - centimeter * 6);
     }
 
     private Rect getFourth(){
         return new Rect((centimeter * 17),
-                size.getHeight() - (centimeter * 2),
+                size.getHeight() - (centimeter * 4),
                 (centimeter * 19),
-                size.getHeight() - centimeter);
+                size.getHeight() - centimeter * 2);
     }
 
     private Rect getFifth(){
         return new Rect((centimeter * 17),
-                size.getHeight() - (centimeter * 4),
+                size.getHeight() - (centimeter * 8),
                 (centimeter * 19),
-                size.getHeight() - (centimeter * 3));
+                size.getHeight() - (centimeter * 6));
     }
     
     public List<Rect> getRectangles() {
@@ -93,7 +116,10 @@ public class Marks implements SurfaceHolder.Callback {
         result.add(getThird());
         result.add(getFourth());
         result.add(getFifth());
-        
+        result.add(getSixth());
+        result.add(getSeventh());
+        result.add(getEightth());
+
         return result; 
     }
 
