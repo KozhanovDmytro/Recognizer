@@ -4,8 +4,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.PixelFormat;
@@ -34,8 +32,12 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.TextureView;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.felipecsl.gifimageview.library.GifImageView;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -45,9 +47,7 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.logging.Logger;
 
 
 public class MainActivity extends Activity {
@@ -55,13 +55,13 @@ public class MainActivity extends Activity {
 
     private SurfaceView surfaceView;
 
+    private GifImageView gifImageView;
+
     private TextureView textureView;
 
     private TextView textView;
 
     private Marks marks = new Marks();
-
-    private volatile boolean result;
 
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -80,7 +80,6 @@ public class MainActivity extends Activity {
     private ImageReader imageReader;
 
     private static final int REQUEST_CAMERA_PERMISSION = 200;
-    private boolean mFlashSupported;
     private Handler mBackgroundHandler;
     private HandlerThread mBackgroundThread;
 
@@ -88,19 +87,32 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         textureView = findViewById(R.id.textureView);
-        assert textureView != null;
-        textureView.setSurfaceTextureListener(textureListener);
-
-
         surfaceView = findViewById(R.id.surfaceView);
-        surfaceView.setZOrderOnTop(true);
-        SurfaceHolder mHolder = surfaceView.getHolder();
-        mHolder.setFormat(PixelFormat.TRANSPARENT);
-
+        gifImageView = findViewById(R.id.gifImageView);
         textView = findViewById(R.id.textView);
 
-        mHolder.addCallback(marks);
+        textureView.setSurfaceTextureListener(textureListener);
+        surfaceView.setZOrderOnTop(true);
+
+        loadGif();
+
+        setMarksOnPreview(surfaceView.getHolder());
+    }
+
+    private void setMarksOnPreview(SurfaceHolder holder) {
+        holder.setFormat(PixelFormat.TRANSPARENT);
+        holder.addCallback(marks);
+    }
+
+    private void loadGif() {
+        Glide.with(this)
+                .load(R.drawable.loupe)
+                .into(gifImageView);
+
+        gifImageView.setVisibility(View.INVISIBLE);
+        gifImageView.stopAnimation();
     }
 
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
@@ -125,9 +137,15 @@ public class MainActivity extends Activity {
             Recognizer recognizer = new Recognizer(textureView.getBitmap(), marks.getRectangles(), marks.getWhitePoints());
 
             if(recognizer.recognize()) {
+                gifImageView.setVisibility(View.VISIBLE);
+                gifImageView.startAnimation();
+
                 textView.setText("Detected");
                 textView.setTextColor(Color.GREEN);
             } else {
+                gifImageView.setVisibility(View.INVISIBLE);
+                gifImageView.stopAnimation();
+
                 textView.setText("Not detected");
                 textView.setTextColor(Color.RED);
             }
@@ -151,11 +169,11 @@ public class MainActivity extends Activity {
             cameraDevice = null;
         }
     };
+
     final CameraCaptureSession.CaptureCallback captureCallbackListener = new CameraCaptureSession.CaptureCallback() {
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-//            Toast.makeText(this, "Saved:" + file, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
@@ -164,6 +182,7 @@ public class MainActivity extends Activity {
         mBackgroundThread.start();
         mBackgroundHandler = new Handler(mBackgroundThread.getLooper());
     }
+
     protected void stopBackgroundThread() {
         mBackgroundThread.quitSafely();
         try {
