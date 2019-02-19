@@ -115,6 +115,10 @@ public class MainActivity extends Activity {
         gifImageView.stopAnimation();
     }
 
+    private Activity getActivity() {
+        return this;
+    }
+
     TextureView.SurfaceTextureListener textureListener = new TextureView.SurfaceTextureListener() {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
@@ -136,19 +140,50 @@ public class MainActivity extends Activity {
         public void onSurfaceTextureUpdated(SurfaceTexture surface) {
             Recognizer recognizer = new Recognizer(textureView.getBitmap(), marks.getRectangles(), marks.getWhitePoints());
 
-            if(recognizer.recognize()) {
+            String code = recognizer.getCodeByMarks();
+
+            if (code.equals(CODE_12345_1)) {
+                Glide.with(getActivity()).load(R.drawable.loupe).into(gifImageView);
+
                 gifImageView.setVisibility(View.VISIBLE);
                 gifImageView.startAnimation();
+            } else if(code.equals(CODE_12346_1)) {
 
-                textView.setText("Detected");
-                textView.setTextColor(Color.GREEN);
+
+                gifImageView.setVisibility(View.VISIBLE);
+                gifImageView.startAnimation();
+            } else if(code.equals(CODE_12347_1)) {
+
+
+                gifImageView.setVisibility(View.VISIBLE);
+                gifImageView.startAnimation();
+            } else if(code.equals(CODE_12348_1)) {
+
+
+                gifImageView.setVisibility(View.VISIBLE);
+                gifImageView.startAnimation();
             } else {
                 gifImageView.setVisibility(View.INVISIBLE);
                 gifImageView.stopAnimation();
-
-                textView.setText("Not detected");
-                textView.setTextColor(Color.RED);
             }
+
+
+            textView.setText(code);
+            textView.setTextColor(Color.GREEN);
+
+//            if(recognizer.recognize()) {
+//                gifImageView.setVisibility(View.VISIBLE);
+//                gifImageView.startAnimation();
+//
+//                textView.setText("Detected");
+//                textView.setTextColor(Color.GREEN);
+//            } else {
+//                gifImageView.setVisibility(View.INVISIBLE);
+//                gifImageView.stopAnimation();
+//
+//                textView.setText("Not detected");
+//                textView.setTextColor(Color.RED);
+//            }
         }
     };
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
@@ -384,4 +419,9 @@ public class MainActivity extends Activity {
         stopBackgroundThread();
         super.onPause();
     }
+
+    private static final String CODE_12345_1 = "12345_1";
+    private static final String CODE_12346_1 = "12346_1";
+    private static final String CODE_12347_1 = "12347_1";
+    private static final String CODE_12348_1 = "12348_1";
 }

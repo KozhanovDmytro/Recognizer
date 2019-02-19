@@ -59,6 +59,41 @@ public class Recognizer {
         return result;
     }
 
+    public String getCodeByMarks() {
+        if(bitmap == null || rectangles == null) {
+            throw new IllegalArgumentException();
+        }
+
+        Log.e("Recognize", "Start recognizing code by marks");
+
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i < rectangles.size(); i++) {
+            if(isBlackRect(rectangles.get(i))) {
+                code.append(i + 1);
+            }
+        }
+
+        code.append("_");
+
+        for (int i = 0; i < whitePoints.size(); i++) {
+            if(isWhitePoint(whitePoints.get(i))) {
+                code.append(i + 1);
+            }
+        }
+
+        Log.e("Recognize", "End recognizing code by marks");
+
+        return code.toString();
+    }
+
+    private boolean isWhitePoint(Point point) {
+        return bitmap.getPixel(point.x, point.y) > -10000000;
+    }
+
+    private boolean isBlackRect(Rect rect) {
+        return bitmap.getPixel(rect.centerX(), rect.centerY()) < -10000000;
+    }
+
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
