@@ -108,7 +108,7 @@ public class MainActivity extends Activity {
 
     private void loadGif() {
         Glide.with(this)
-                .load(R.drawable.loupe)
+                .load(R.drawable.defaultanimation)
                 .into(gifImageView);
 
         gifImageView.setVisibility(View.INVISIBLE);
@@ -143,22 +143,22 @@ public class MainActivity extends Activity {
             String code = recognizer.getCodeByMarks();
 
             if (code.equals(CODE_12345_1)) {
-                Glide.with(getActivity()).load(R.drawable.loupe).into(gifImageView);
+                Glide.with(getActivity()).load(R.drawable.fulleren).into(gifImageView);
 
                 gifImageView.setVisibility(View.VISIBLE);
                 gifImageView.startAnimation();
             } else if(code.equals(CODE_12346_1)) {
-
+                Glide.with(getActivity()).load(R.drawable.defaultanimation).into(gifImageView);
 
                 gifImageView.setVisibility(View.VISIBLE);
                 gifImageView.startAnimation();
             } else if(code.equals(CODE_12347_1)) {
-
+                Glide.with(getActivity()).load(R.drawable.computer).into(gifImageView);
 
                 gifImageView.setVisibility(View.VISIBLE);
                 gifImageView.startAnimation();
             } else if(code.equals(CODE_12348_1)) {
-
+                Glide.with(getActivity()).load(R.drawable.sun_and_panel).into(gifImageView);
 
                 gifImageView.setVisibility(View.VISIBLE);
                 gifImageView.startAnimation();
@@ -167,23 +167,8 @@ public class MainActivity extends Activity {
                 gifImageView.stopAnimation();
             }
 
-
-            textView.setText(code);
-            textView.setTextColor(Color.GREEN);
-
-//            if(recognizer.recognize()) {
-//                gifImageView.setVisibility(View.VISIBLE);
-//                gifImageView.startAnimation();
-//
-//                textView.setText("Detected");
-//                textView.setTextColor(Color.GREEN);
-//            } else {
-//                gifImageView.setVisibility(View.INVISIBLE);
-//                gifImageView.stopAnimation();
-//
-//                textView.setText("Not detected");
-//                textView.setTextColor(Color.RED);
-//            }
+//            textView.setText(code);
+//            textView.setTextColor(Color.GREEN);
         }
     };
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {

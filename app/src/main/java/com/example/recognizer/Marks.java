@@ -16,7 +16,8 @@ public class Marks implements SurfaceHolder.Callback {
 
     private static String TAG = "Marks";
     
-    private Paint paint = new Paint();
+    private Paint visiblePaint = new Paint();
+    private Paint invisiblePaint = new Paint();
 
     private int centimeter = 37;
 
@@ -31,11 +32,18 @@ public class Marks implements SurfaceHolder.Callback {
         if (canvas == null) {
             Log.e(TAG, "Cannot draw onto the canvas as it's null");
         } else {
-            paint.setColor(Color.argb(150, 100, 20, 50));
-            paint.setStyle(Paint.Style.FILL);
+            visiblePaint.setColor(Color.argb(150, 100, 20, 50));
+            visiblePaint.setStyle(Paint.Style.FILL);
 
-            for (Rect rectangle : getRectangles()) {
-                canvas.drawRect(rectangle, paint);
+            invisiblePaint.setColor(Color.argb(0, 100, 20, 50));
+            invisiblePaint.setStyle(Paint.Style.FILL);
+
+            List<Rect> rectangles = getRectangles();
+
+            for (int i = 0; i < rectangles.size(); i++) {
+                if(i == 0 || i == 3) {
+                    canvas.drawRect(rectangles.get(i), visiblePaint);
+                }
             }
             
             holder.unlockCanvasAndPost(canvas);
